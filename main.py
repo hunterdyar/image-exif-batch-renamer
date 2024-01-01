@@ -62,7 +62,8 @@ def rename_dir(dir,pattern, dry_run=  False):
             new_file = rename_image(file,get_exif_dict(image),pattern)
             count = count+1
             if not dry_run:
-                os.rename(filepath,dir+new_file)
+                if new_file != file:
+                    os.rename(filepath,dir+new_file)
             print(f"rename {file} to {new_file}")
         else:
             print("skipping", file)
