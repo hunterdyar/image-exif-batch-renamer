@@ -7,7 +7,8 @@ from exif import Image
 tag_to_data = {"[A]": "f_number",
                "[SS]": "exposure_time",
                "[ISO]": "photographic_sensitivity",
-               "[P]": "exposure_program"}
+               "[P]": "exposure_program",
+               "[COMPRESSION]": "compression"}
 count = 0
 def rename_image(filename, exifdata, pattern):
     original, extension = os.path.splitext(filename)
@@ -47,7 +48,7 @@ def get_exif_dict(image):
             elif f.denominator == 1:
                 d[data] = "{:n}s".format(f.numerator)
             else:
-                d[data] = "{:n}".format(f.numerator,f.denominator)
+                d[data] = "{:n}-{:n}".format(f.numerator, f.denominator)
             continue
         d[data] = str(image.get(data)).strip()
     return d
