@@ -1,5 +1,6 @@
 import os
 import warnings
+import argparse
 from fractions import Fraction
 from exif import Image
 
@@ -74,8 +75,14 @@ if __name__ == '__main__':
         # We assume provided images are valid enough.
         warnings.filterwarnings("ignore","^.*ASCII tag contains.*$")
 
+        parser = argparse.ArgumentParser(description='Rename a directory of images.')
+        parser.add_argument("-d","--directory", default=".", help="Directory")
+        parser.add_argument("-p", "--pattern",type=str,default="[O]")
+        parser.add_argument("-t", "--test", default=False, action="store_true")
+
+        args = parser.parse_args()
         #handle flags
-        rename_dir('test/',"s[SS]_a[A]_iso[ISO]_[C]", True)
+        rename_dir(args.directory,args.pattern, args.test)
 
         # results
         print("Renamed {count} images".format(count=count))
