@@ -53,6 +53,7 @@ def get_exif_dict(image):
     return d
 
 def rename_dir(dir,pattern, dry_run=  False):
+    names = []
     global count
     count = 0
     for file in os.listdir(dir):
@@ -60,14 +61,18 @@ def rename_dir(dir,pattern, dry_run=  False):
         image = Image(filepath)
         if(image.has_exif):
             new_file = rename_image(file,get_exif_dict(image),pattern)
+            if new_file in names:
+                raise Exception("Error: Already a file with resulting name. Add [C] to pattern for counting."+new_file)
+            names.append(new_file)
             count = count+1
             if not dry_run:
                 if new_file != file:
                     os.rename(filepath,dir+new_file)
+
             print(f"rename {file} to {new_file}")
         else:
             print("skipping", file)
-
+    return names
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
