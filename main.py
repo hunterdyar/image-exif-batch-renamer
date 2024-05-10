@@ -53,17 +53,22 @@ def get_exif_dict(image):
         d[data] = str(image.get(data)).strip()
     return d
 
-def rename_dir(dir,pattern, dry_run=  False):
+def rename_dir(dir,pattern, dry_run=  False, skip = False):
     names = []
     global count
     count = 0
     for file in os.listdir(dir):
         filepath = dir+file
+        print(filepath)
         image = Image(filepath)
         if(image.has_exif):
             new_file = rename_image(file,get_exif_dict(image),pattern)
             if new_file in names:
-                raise Exception("Error: Already a file with resulting name. Add [C] to pattern for counting."+new_file)
+                if not skip:
+                    raise Exception("Error: Already a file with resulting name. Add [C] to pattern for counting."+new_file)
+                else:
+                    print("skipping duplicate ", file)
+                    continue
             names.append(new_file)
             count = count+1
             if not dry_run:
@@ -72,7 +77,7 @@ def rename_dir(dir,pattern, dry_run=  False):
 
             print(f"rename {file} to {new_file}")
         else:
-            print("skipping", file)
+            print("skipping ", file)
     return names
 
 # Press the green button in the gutter to run the script.
@@ -86,10 +91,10 @@ if __name__ == '__main__':
         parser.add_argument("-d","--directory", default=".", help="Directory")
         parser.add_argument("-p", "--pattern",type=str,default="[O]")
         parser.add_argument("-t", "--test", default=False, action="store_true")
-
+        parser.add_argument("-s", "--skip", default=False, action="store_true")
         args = parser.parse_args()
         #handle flags
-        rename_dir(args.directory,args.pattern, args.test)
+        rename_dir(args.directory,args.pattern, args.test, args.skip)
 
         # results
         print("Renamed {count} images".format(count=count))
